@@ -52,9 +52,9 @@ export const createBooking = async (req, res) => {
         let totalPrice = roomData.pricePerNight;
 
         // Calculate total Price based on nights
-        const checkInDate = new Date(checkInDate)
-        const checkOutDate = new Date(checkOutDate)
-        const timeDiff = checkOutDate.getTime() - checkIn.getTime();
+        const checkIn = new Date(checkInDate)
+        const checkOut = new Date(checkOutDate)
+        const timeDiff = checkOut.getTime() - checkIn.getTime();
         const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
         totalPrice *= nights;

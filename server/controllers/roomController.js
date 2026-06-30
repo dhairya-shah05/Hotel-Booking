@@ -22,7 +22,7 @@ export const createRoom = async (req, res) => {
                         resolve(result.secure_url);
                     }
                 );
-                stream.end(file.buffer); // ✅ use buffer instead of file.path
+                stream.end(file.buffer); // use buffer instead of file.path
             });
         });
 
@@ -43,13 +43,7 @@ export const createRoom = async (req, res) => {
 // API to get all rooms
 export const getRooms = async (req, res) => {
     try {
-        const rooms = await Room.find({ isAvailable: true }).populate({
-            path: 'owner',
-            populate: {
-                path: 'owner',
-                select: 'image'
-            }
-        }).sort({ createdAt: -1 })
+        const rooms = await Room.find({ isAvailable: true }).populate("hotel").sort({ createdAt: -1 })
         res.json({ success: true, rooms });
     } catch (error) {
         res.json({ success: false, message: error.message })

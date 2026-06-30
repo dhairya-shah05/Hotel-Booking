@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import { Webhook } from "svix";
+import connectDB from "../configs/db.js";
 
 const clerkWebHooks = async (req, res) => {
     

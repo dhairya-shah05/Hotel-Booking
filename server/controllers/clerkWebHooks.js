@@ -4,6 +4,7 @@ import { Webhook } from "svix";
 const clerkWebHooks = async (req, res) => {
     
     try {
+        await connectDB();
         console.log("HEADERS:", req.headers);
         
         // Create a Svix instance with clerk webhook secret

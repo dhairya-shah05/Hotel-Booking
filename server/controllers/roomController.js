@@ -9,7 +9,6 @@ export const createRoom = async (req, res) => {
         const hotel = await Hotel.findOne({ owner: req.user._id })
 
         if (!hotel) return res.json({ success: false, message: "No Hotel Found" });
-        console.log("FILES RECEIVED:", req.files?.length);
 
         // Upload images to cloudinary
         const uploadImages = req.files.map(async (file) => {
@@ -18,7 +17,6 @@ export const createRoom = async (req, res) => {
                     { resource_type: "image" },
                     (error, result) => {
                         if (error) {
-                            console.log("CLOUDINARY UPLOAD ERROR:", error);
                             return reject(error);
                         }
                         resolve(result.secure_url);
@@ -38,7 +36,6 @@ export const createRoom = async (req, res) => {
         })
         res.json({ success: true, message: "Room created successfully" })
     } catch (error) {
-        console.log("CREATE ROOM ERROR:", error);
         res.json({ success: false, message: error.message })
     }
 }

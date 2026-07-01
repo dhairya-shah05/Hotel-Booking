@@ -1,8 +1,10 @@
 import Hotel from "../models/hotel.js";
 import User from "../models/User.js";
+import connectDB from "../configs/db.js";
 
 export const registerHotel = async(req, res)=> {
     try {
+        await connectDB()
         const {name, address, contact, city} = req.body;
         const owner = req.user._id
 

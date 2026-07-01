@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { assets, facilityIcons, roomCommonData } from "../assets/assets";
 import StarRating from "../components/StarRating";
-import { useAppContext } from "../context/appContext";
 import toast from "react-hot-toast";
+import { useAppContext } from "../context/AppContext";
 
 const RoomDetails = () => {
     const { id } = useParams()

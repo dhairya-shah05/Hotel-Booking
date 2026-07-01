@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Title from '../../components/Title';
 import { assets } from '../../assets/assets';
-import { useAppContext } from '../../context/appContext';
 import toast from 'react-hot-toast';
+import { useAppContext } from '../../context/AppContext';
 
 const Dashboard = () => {
 

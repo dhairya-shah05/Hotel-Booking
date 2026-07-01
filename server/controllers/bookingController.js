@@ -1,11 +1,14 @@
 import transporter from "../configs/nodemailer.js";
 import Booking from "../models/booking.js"
 import Hotel from "../models/hotel.js";
-import Room from "../models/room.js";
+import Room from "../models/room.js"
+import connectDB from "../configs/db.js";
 
 // Fucntion to check availability of a room
 const checkAvailability = async ({ checkInDate, checkOutDate, room }) => {
+
     try {
+        await connectDB()
         const bookings = await Booking.find({
             room,
             checkInDate: { $lte: checkOutDate },
@@ -35,6 +38,7 @@ export const checkAvailabilityAPI = async (req, res) => {
 
 export const createBooking = async (req, res) => {
     try {
+        await connectDB()
         const { room, checkInDate, checkOutDate, guests } = req.body;
         const user = req.user._id;
 
@@ -108,7 +112,9 @@ export const createBooking = async (req, res) => {
 // API to get all bookings for a user
 // GET /api/bookings/user
 export const getUserBookings = async (req, res) => {
+
     try {
+        await connectDB()
         const user = req.user._id;
         const bookings = await Booking.find({ user })
             .populate("room hotel")
@@ -121,6 +127,7 @@ export const getUserBookings = async (req, res) => {
 
 export const getHotelBookings = async (req, res) => {
     try {
+        await connectDB()
         const hotel = await Hotel.findOne({ owner: req.user._id });
         if (!hotel) {
             return res.json({ success: false, message: "No Hotel Found" });
@@ -132,6 +139,7 @@ export const getHotelBookings = async (req, res) => {
         const totalRevenue = bookings.reduce((acc, booking) => acc + booking.totalPrice, 0)
         res.json({ success: true, dashboardData: { totalBookings, totalRevenue, bookings } })
     } catch (error) {
-        res.json({ success: false, message: "Failed to fetch bookings" })
+        console.log("getHotelBookings ERROR:", error); // 👈 add this
+        res.json({ success: false, message: error.message })
     }
 }

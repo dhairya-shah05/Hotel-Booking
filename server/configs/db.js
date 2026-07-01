@@ -13,10 +13,13 @@ const connectDB = async () => {
 
     if (!cached.promise) {
         cached.promise = mongoose.connect(`${process.env.MONGODB_URI}`, {
-            bufferCommands: false, // fail fast instead of buffering forever
+            bufferCommands: false,
         }).then((mongoose) => {
             console.log("Database Connected");
             return mongoose;
+        }).catch((err) => {
+            cached.promise = null; // ✅ reset so it retries next call
+            throw err;
         });
     }
 

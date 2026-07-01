@@ -1,10 +1,13 @@
 import Hotel from "../models/hotel.js";
 import Room from "../models/room.js";
 import { v2 as cloudinary } from "cloudinary";
+import connectDB from "../configs/db.js";
 
 // API to create a new room for a hotel
 export const createRoom = async (req, res) => {
+    
     try {
+        await connectDB()
         const { roomType, pricePerNight, amenities } = req.body;
         const hotel = await Hotel.findOne({ owner: req.user._id })
 
@@ -42,7 +45,9 @@ export const createRoom = async (req, res) => {
 
 // API to get all rooms
 export const getRooms = async (req, res) => {
+    
     try {
+        await connectDB()
         const rooms = await Room.find({ isAvailable: true }).populate("hotel").sort({ createdAt: -1 })
         res.json({ success: true, rooms });
     } catch (error) {
@@ -53,6 +58,7 @@ export const getRooms = async (req, res) => {
 // API to get all rooms for a specific hotel
 export const getOwnerRooms = async (req, res) => {
     try {
+        await connectDB()
         const hotelData = await Hotel.findOne({ owner: req.user._id })
         const rooms = await Room.find({ hotel: hotelData._id.toString() }).populate("hotel");
         res.json({ success: true, rooms });
@@ -64,6 +70,7 @@ export const getOwnerRooms = async (req, res) => {
 // API to toggle availability of a room
 export const toggleRoomAvailability = async (req, res) => {
     try {
+        await connectDB()
         const { roomId } = req.body;
         const roomData = await Room.findById(roomId);
         roomData.isAvailable = !roomData.isAvailable;

@@ -1,3 +1,4 @@
+import transporter from "../configs/nodemailer.js";
 import Booking from "../models/booking.js"
 import Hotel from "../models/hotel.js";
 import Room from "../models/room.js";
@@ -67,6 +68,36 @@ export const createBooking = async (req, res) => {
             totalPrice,
         })
 
+        const mailOptions = {
+            from: process.env.SENDER_EMAIL,
+            to: req.user.email,
+            subject: 'Hotel Booking Details',
+            html: `
+                <h2>Your Booking Details</h2>
+                <p>Dear ${req.user.username},</p>
+                <p>Thank you for your booking! Here are your details:</p>
+                <ul>
+                    <li><strong>Booking ID:</strong> ${booking._id}</li>
+                    <li><strong>Hotel Name:</strong> ${roomData.hotel.name}</li>
+                    <li><strong>Location:</strong> ${roomData.hotel.address}</li>
+                    <li><strong>Date:</strong> ${booking.checkInDate.toDateString()}</li>
+                    <li><strong>Booking Amount:</strong> ${process.env.CURRENCY || '$'} 
+                        ${booking.totalPrice}
+                    </li>
+                    <li><strong>Booking ID:</strong> ${booking._id}</li>
+                </ul>
+                <p>We look forward to welcoming you!</p>
+                <p>If you need to make any changes, feel free to contact us.</p>
+            `
+
+        }
+
+        try {
+            await transporter.sendMail(mailOptions)
+        } catch (emailError) {
+            console.log("Email failed:", emailError.message)
+        }
+
         res.json({ success: true, message: "Booking created successfully" })
     } catch (error) {
         console.log(error);
@@ -79,7 +110,9 @@ export const createBooking = async (req, res) => {
 export const getUserBookings = async (req, res) => {
     try {
         const user = req.user._id;
-        const bookings = (await Booking.find({ user }).populate("room hotel")).toSorted({ createdAt: -1 })
+        const bookings = await Booking.find({ user })
+            .populate("room hotel")
+            .sort({ createdAt: -1 }) //  Mongoose .sort() chained on query
         res.json({ success: true, bookings })
     } catch (error) {
         res.json({ success: false, message: "Failed to fetch bookings" })
@@ -88,7 +121,7 @@ export const getUserBookings = async (req, res) => {
 
 export const getHotelBookings = async (req, res) => {
     try {
-        const hotel = await Hotel.findOne({ owner: req.auth.userId });
+        const hotel = await Hotel.findOne({ owner: req.user._id });
         if (!hotel) {
             return res.json({ success: false, message: "No Hotel Found" });
         }

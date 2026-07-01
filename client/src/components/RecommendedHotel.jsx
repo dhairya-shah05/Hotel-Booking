@@ -3,7 +3,7 @@ import HotelCard from './HotelCard'
 import Title from './Title'
 import { useAppContext } from '../context/appContext'
 
-const recommendedHotels = () => {
+const RecommendedHotels = () => {
     const {rooms, searchedCities} = useAppContext();
     const [recommended, setRecommended] = useState([])
 
@@ -30,4 +30,4 @@ const recommendedHotels = () => {
     )
 }
 
-export default recommendedHotels
+export default RecommendedHotels

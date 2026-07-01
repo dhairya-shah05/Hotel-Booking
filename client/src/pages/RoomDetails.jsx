@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 
 const RoomDetails = () => {
     const { id } = useParams()
-    const {rooms, getToken, axios, navigate} = useAppContext()
+    const { rooms, getToken, axios, navigate } = useAppContext()
     const [room, setRoom] = useState(null)
     const [mainImage, setMainImage] = useState(null)
     const [checkInDate, setCheckInDate] = useState(null);
@@ -19,44 +19,46 @@ const RoomDetails = () => {
     const checkAvailability = async () => {
         try {
             // Check if check-in-date is greater than check-out-date
-            if(checkInDate >= checkOutDate) {
+            if (checkInDate >= checkOutDate) {
                 toast.error('Check-In Date should be less than Check-Out Date')
                 return;
             }
-            const {data} = await axios.post('/api/bookings/check-availability',
-                {room: id, checkInDate, checkOutDate})
-                if(data.success) {
-                    if(data.isAvailable) {
-                        setIsAvailable(true)
-                        toast.success('Room is available')
-                    } else {
-                        setIsAvailable(false)
-                        toast.error('Room is not available')
-                    }
+            const { data } = await axios.post('/api/bookings/check-availability',
+                { room: id, checkInDate, checkOutDate })
+            if (data.success) {
+                if (data.isAvailable) {
+                    setIsAvailable(true)
+                    toast.success('Room is available')
                 } else {
-                    toast.error(data.message)
+                    setIsAvailable(false)
+                    toast.error('Room is not available')
                 }
+            } else {
+                toast.error(data.message)
+            }
         } catch (error) {
             toast.error(error.message)
         }
     }
 
     // onSubmitHandler function to check the availability and book the room
-    const onSubmitHandler = async(e) => {
+    const onSubmitHandler = async (e) => {
         try {
             e.preventDefault();
-            if(!isAvailable) {
+            if (!isAvailable) {
                 return checkAvailability();
             } else {
-                const {data} = await axios.post('/api/bookings/book', {room: id, checkInDate, checkOutDate, guests, paymentMethod: "Pay At Arrival"},
-                    {headers: {Authorization: `Bearer ${await getToken()}`}})
-                    if(data.success) {
-                        toast.success(data.message)
-                        navigate('/my-bookings')
-                        scrollTo(0, 0)
-                    } else {
-                        toast.error(data.message)
-                    }
+                console.log("making booking request...");
+                const { data } = await axios.post('/api/bookings/book', { room: id, checkInDate, checkOutDate, guests, paymentMethod: "Pay At Arrival" },
+                    { headers: { Authorization: `Bearer ${await getToken()}` } })
+                console.log("booking response:", data);
+                if (data.success) {
+                    toast.success(data.message)
+                    navigate('/my-bookings')
+                    scrollTo(0, 0)
+                } else {
+                    toast.error(data.message)
+                }
             }
         } catch (error) {
             toast.error(error.message)
@@ -135,8 +137,8 @@ const RoomDetails = () => {
                 gap-4 md:gap-10 text-gray-500">
                     <div className="flex flex-col">
                         <label htmlFor="checkInDate" className="font-medium">Check-In</label>
-                        <input onChange={(e)=>setCheckInDate(e.target.value)} min={new Date().toISOString().split('T')[0]} 
-                        type="date" id="checkInDate" placeholder="Check-In" className="w-full rounded-2xl
+                        <input onChange={(e) => setCheckInDate(e.target.value)} min={new Date().toISOString().split('T')[0]}
+                            type="date" id="checkInDate" placeholder="Check-In" className="w-full rounded-2xl
                         border border-gray-300 px-3 py-2 mt-1.5 outline-none" required />
                     </div>
 
@@ -144,16 +146,16 @@ const RoomDetails = () => {
 
                     <div className="flex flex-col">
                         <label htmlFor="checkOutDate" className="font-medium">Check-Out</label>
-                        <input onChange={(e)=>setCheckOutDate(e.target.value)} min={checkOutDate} 
-                        disabled={!checkInDate} type="date" id="checkOutDate" placeholder="Check-Out" 
-                        className="w-full rounded-2xl border border-gray-300 px-3 py-2 mt-1.5 outline-none" required />
+                        <input onChange={(e) => setCheckOutDate(e.target.value)} min={checkOutDate}
+                            disabled={!checkInDate} type="date" id="checkOutDate" placeholder="Check-Out"
+                            className="w-full rounded-2xl border border-gray-300 px-3 py-2 mt-1.5 outline-none" required />
                     </div>
 
                     <div className="w-px h-15 bg-gray-300/70 max-md:hidden"></div>
 
                     <div className="flex flex-col">
                         <label htmlFor="guests" className="font-medium">Guests</label>
-                        <input onChange={(e)=>setGuests(e.target.value)} value={guests} type="number" id="guests" placeholder="1" className="max-w-20 rounded border border-gray-300
+                        <input onChange={(e) => setGuests(e.target.value)} value={guests} type="number" id="guests" placeholder="1" className="max-w-20 rounded border border-gray-300
                          px-3 py-2 mt-1.5 outline-none" required />
                     </div>
                 </div>
@@ -167,9 +169,9 @@ const RoomDetails = () => {
 
             {/* Common Specifications */}
             <div className="mt-25 space-y-4">
-                {roomCommonData.map((spec, index)=>(
+                {roomCommonData.map((spec, index) => (
                     <div key={index} className="flex items-start gap-2">
-                        <img src={spec.icon} alt={`${spec.title}-icon`} className="w-6.5"/>
+                        <img src={spec.icon} alt={`${spec.title}-icon`} className="w-6.5" />
                         <div>
                             <p className="text-base">{spec.title}</p>
                             <p className="text-gray-500">{spec.description}</p>
@@ -180,8 +182,8 @@ const RoomDetails = () => {
 
             <div className="max-w-3xl border-y border-gray-300 my-15 py-10 text-gray-500">
                 <p>Guests will be allocated on the ground floor according to availability. You get a comfortable
-                    two bedroom appartment, and it has a true city feeling. The price quoted is for two guest, 
-                    at the guest slot please mark the number of guests to get the exact price for groups.  
+                    two bedroom appartment, and it has a true city feeling. The price quoted is for two guest,
+                    at the guest slot please mark the number of guests to get the exact price for groups.
                 </p>
             </div>
 
@@ -193,7 +195,7 @@ const RoomDetails = () => {
                     <div>
                         <p className="text-lg md:text-xl">Hosted By {room.hotel.name}</p>
                         <div className="flex items-center mt-1">
-                            <StarRating/>
+                            <StarRating />
                             <p className="ml-2">200+ Reviews</p>
                         </div>
                     </div>
